@@ -1,0 +1,13 @@
+name = "DifferentiableHarmonics"
+uuid = "f00042ca-6163-4ab1-b8cf-c6ac9c8e327d"
+authors = ["Maximilian Gelbrecht <maximilian.gelbrecht@posteo.de> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10.4"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
