@@ -3,6 +3,19 @@ uuid = "f00042ca-6163-4ab1-b8cf-c6ac9c8e327d"
 authors = ["Maximilian Gelbrecht <maximilian.gelbrecht@posteo.de> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+AbstractFFTs = "621f4979-c628-5d54-868e-fcf4e3e8185c"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
+FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
+GSL = "92c85e6c-cbff-5e0c-80f7-495c94daaecd"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
 [compat]
 julia = "1.10.4"
 

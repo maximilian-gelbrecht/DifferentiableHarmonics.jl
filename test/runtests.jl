@@ -2,5 +2,6 @@ using DifferentiableHarmonics
 using Test
 
 @testset "DifferentiableHarmonics.jl" begin
-    # Write your tests here.
+    include("r2r_transform.jl")
+    include("transforms.jl")
 end
