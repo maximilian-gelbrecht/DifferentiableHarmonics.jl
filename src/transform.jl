@@ -160,8 +160,7 @@ end
 
 # 2D Version
 function transform_grid(A::AbstractArray{P,2}, t::SHtoGaussianGridTransform{P,S,T,FT,U,TU,I}) where {P,S,T,FT,U,TU,I}
-
-    out = batched_vec(t.P,A) # ?
+    @tullio out[ilat, im] := t.P[ilat, il, im] * A[il, im]
     
     (t.iFT_2d * out) ./ t.N_lons # has to be normalized as this is not done by the FFT
 end
