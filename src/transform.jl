@@ -1,6 +1,5 @@
 import Base.show
-using Tullio
-using GSL
+using Tullio, GSL, NNlib
 import GSL.sf_legendre_deriv_array_e
 import GSL.sf_legendre_deriv_alt_array_e
 import GSL.sf_legendre_array_index
@@ -162,7 +161,7 @@ end
 # 2D Version
 function transform_grid(A::AbstractArray{P,2}, t::SHtoGaussianGridTransform{P,S,T,FT,U,TU,I}) where {P,S,T,FT,U,TU,I}
 
-    out = batched_vec(t.P,A)
+    out = batched_vec(t.P,A) # ?
     
     (t.iFT_2d * out) ./ t.N_lons # has to be normalized as this is not done by the FFT
 end
@@ -190,11 +189,11 @@ m values are stored 0,1,2,3,4,5,6,7, ...l_max, 0 (nothing),-1, -2, -3, (on GPU) 
 # so far only |m| is used, as I assume real SPH.
 """
 function compute_P(p::HarmonicsParameters{T}; sh_norm=GSL.GSL_SF_LEGENDRE_SPHARM, CSPhase::Integer=-1,prefactor=false) where T<:Number
-    (; μ, N_lats, L, M, device) = p 
+    (; μ, N_lats, L, M, neg_m_offset, device, size_SH) = p 
 
     N_lats = length(μ)
-    P = zeros(T, N_lats, L, M+1) # one more because we have one redudant column
-    dPμdμ = zeros(T, N_lats, L, M+1)
+    P = zeros(T, N_lats, size_SH[1], size_SH[2]) # one more because we have one redudant column
+    dPμdμ = zeros(T, N_lats, size_SH[1], size_SH[2])
 
     gsl_legendre_index(l,m) = m > l ? error("m > l, not defined") : sf_legendre_array_index(l,m)+1 # +1 because of c indexing vs julia indexing
 
@@ -208,8 +207,8 @@ function compute_P(p::HarmonicsParameters{T}; sh_norm=GSL.GSL_SF_LEGENDRE_SPHARM
             for il ∈ 1:(L - abs(m)) # l = abs(m):l_max
                 l = il + abs(m) - 1
                 if m<0 # the ass. LP are actually the same for m<0 for our application as only |m| is needed, but I do this here in this way to have everything related to SH in the same matrix format
-                    P[ilat, il, L+abs(m)+1] = pre_factor(m) * temp[1][gsl_legendre_index(l,abs(m))]
-                    dPμdμ[ilat, il, L+abs(m)+1] = pre_factor(m) * temp[2][gsl_legendre_index(l,abs(m))]
+                    P[ilat, il, neg_m_offset+abs(m)+1] = pre_factor(m) * temp[1][gsl_legendre_index(l,abs(m))]
+                    dPμdμ[ilat, il, neg_m_offset+abs(m)+1] = pre_factor(m) * temp[2][gsl_legendre_index(l,abs(m))]
                 else
                     P[ilat, il, m+1] = pre_factor(m) * temp[1][gsl_legendre_index(l,m)]
                     dPμdμ[ilat, il, m+1] = pre_factor(m) * temp[2][gsl_legendre_index(l,m)]

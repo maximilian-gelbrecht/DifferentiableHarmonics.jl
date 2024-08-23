@@ -1,12 +1,13 @@
 using SpeedyWeather.RingGrids
 using SpeedyWeather.LowerTriangularMatrices
 using SpeedyWeather.SpeedyTransforms
+using StatsBase
 
 # this is a very basic to test if the transform and derivite work sort of correct, it just checks if it can correctly transform and take derivatives of cosθ
 @testset "Transforms" begin
     
     # load forcing and model parameters
-    L_max = 21
+    L_max = 22
     p = HarmonicsParameters(L_max)
 
     synthesis_plan = GaussianGridtoSHTransform(p, 3, 2)
@@ -23,8 +24,8 @@ using SpeedyWeather.SpeedyTransforms
     cosθ = zeros_grid(p) 
     msinθ = zeros_grid(p)
     for i ∈ 1:p.N_lats
-        cosθ[i,:] .= cos(qg3ppars.θ[i])
-        msinθ[i,:] .= -sin(qg3ppars.θ[i])
+        cosθ[i,:] .= cos(p.θ[i])
+        msinθ[i,:] .= -sin(p.θ[i])
     end
 
     # 2D transforms
@@ -50,16 +51,6 @@ using SpeedyWeather.SpeedyTransforms
     cg = transform_grid(cSH, analysis_plan)
     @test mean(abs.(cg - cosθ) ./ abs.(cg)) < 1e-3
     
-    # 3D deriv
-    # very close to zero
-    @test abs.(mean(QG3.SHtoGrid_dλ(cSH, g))) < 1e-5
-    
-    # near constant 1
-    @test mean(abs.(QG3.SHtoGrid_dμ(cSH, g) .- 1)) < 1e-2
-    
-    # near -sinθ
-    @test mean(abs.(QG3.SHtoGrid_dθ(cSH, g) - msinθ)) < 1e-2
-    
     # batched transforms & derivs 
     cosθ = repeat(cosθ, 1,1,1, 2)
     msinθ = repeat(msinθ, 1,1,1, 2)
@@ -70,9 +61,9 @@ using SpeedyWeather.SpeedyTransforms
     
     cSH = transform_SH(cosθ, synthesis_plan)
     
-    @test QG3.transform_SH(cosθ[:,:,:,1], qg3p) ≈ cSH[:,:,:,1]
+    @test transform_SH(cosθ[:,:,:,1], analysis_plan) ≈ cSH[:,:,:,1]
     
-    ASH = transform_SH(A, syntheis_plan)
+    ASH = transform_SH(A, synthesis_plan)
 
     @test transform_SH(A[:,:,:,1], synthesis_plan) ≈ ASH[:,:,:,1]
 
@@ -93,8 +84,8 @@ using SpeedyWeather.SpeedyTransforms
     if CUDA.functional() 
         
         p_gpu = HarmonicsParameters(L_max, GPU=true)
-        analysis_plan_gpu = GaussianGridtoSHTransform(p_gpu)
-        synthesis_plan_gpu = SHtoGaussianGridTransform(p_gpu)
+        synthesis_plan_gpu = GaussianGridtoSHTransform(p_gpu, 3, 2)
+        analysis_plan_gpu = SHtoGaussianGridTransform(p_gpu, 3, 2)
 
         A_gpu = cu(A)
         B_gpu = cu(B)

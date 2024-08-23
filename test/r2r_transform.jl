@@ -31,7 +31,7 @@ using FiniteDifferences, FFTW, CUDA, Zygote
     @test A_out_2[53:end-1,:] ≈ A_out_r2r_2[end:-1:52,:]
     @test all(A_out_2[end] .≈ 0) # thats the Im(f_end) = 0 (always)
 
-    @test (ifft_plan_2 * A_out_2)./100 ≈ A_2 # plan not normalized 
+    @test (ifft_plan_2 * A_out_2)./100 ≈ A2 # plan not normalized 
 
     if CUDA.functional()
         # test if GPU and CPU are identical 

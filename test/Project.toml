@@ -1,7 +1,10 @@
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+DifferentiableHarmonics = "f00042ca-6163-4ab1-b8cf-c6ac9c8e327d"
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 FiniteDifferences = "26cc04aa-876d-5657-8c51-4c34ba976000"
+QG3 = "d558103f-7907-4730-8f30-3d9252e5a318"
 SpeedyWeather = "9e226e20-d153-4fed-8a5b-493def4f21a9"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
