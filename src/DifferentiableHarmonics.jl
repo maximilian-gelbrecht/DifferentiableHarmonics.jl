@@ -2,7 +2,7 @@ module DifferentiableHarmonics
 
 # Write your package code here.
 
-using DocStringExtensions, FastGaussQuadrature, GSL
+using DocStringExtensions, FastGaussQuadrature, GSL, Tullio, KernelAbstractions, CUDA
 
 include("gpu.jl")
 include("parameters.jl")
