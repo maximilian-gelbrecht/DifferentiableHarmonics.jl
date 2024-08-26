@@ -41,7 +41,7 @@ function HarmonicsParameters(Lmax::Integer, lats::AbstractArray{T,1}, lons::Abst
 
     size_SH = (p.N_lats, p.N_lons+2)
     
-    HarmonicsParameters{eltype{lats},typeof(dev),typeof(size_SH)}(L, M, Lmax, N_lats, N_lons, lats, lons, colats, μ, (p.N_lats, p.N_lons+2), (p.N_lats, p.N_lons),  N_lons // 2 + 1, dev)
+    HarmonicsParameters{eltype{lats},typeof(dev),typeof(size_SH)}(L, M, Lmax, N_lats, N_lons, lats, lons, colats, μ, (p.N_lats, p.N_lons+2), (p.N_lats, p.N_lons),  N_lats + 2, dev)
 end 
 
 """
@@ -82,6 +82,6 @@ function HarmonicsParameters(Lmax::Integer, antialiasing::Symbol=:quadratic; elt
     colats = lat_to_colat.(lats)
     size_SH = (N_lats, N_lons+2)
 
-    HarmonicsParameters{eltype,typeof(dev),typeof(size_SH)}(L, M, Lmax, N_lats, N_lons, lats, lons, colats, μ, size_SH, (N_lats, N_lons), N_lons // 2 + 1, dev)
+    HarmonicsParameters{eltype,typeof(dev),typeof(size_SH)}(L, M, Lmax, N_lats, N_lons, lats, lons, colats, μ, size_SH, (N_lats, N_lons), N_lats + 2, dev)
 end 
 

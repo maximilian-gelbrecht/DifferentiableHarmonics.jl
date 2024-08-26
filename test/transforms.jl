@@ -42,7 +42,7 @@ using StatsBase
     
     cSH = transform_SH(cosθ, synthesis_plan)
     
-    @test mean(abs.(cSH[1,:,:] - cSH_2d)) < 1e-5
+    @test mean(abs.(cSH[:,:,1] - cSH_2d)) < 1e-5
     @test sum(abs.(cSH) .> 1.) == 3
     @test abs.(cSH[1,2,1]) > 20.
     @test abs.(cSH[1,2,2]) > 20.
@@ -61,7 +61,7 @@ using StatsBase
     
     cSH = transform_SH(cosθ, synthesis_plan)
     
-    @test transform_SH(cosθ[:,:,:,1], analysis_plan) ≈ cSH[:,:,:,1]
+    @test transform_SH(cosθ[:,:,:,1], synthesis_plan) ≈ cSH[:,:,:,1]
     
     ASH = transform_SH(A, synthesis_plan)
 

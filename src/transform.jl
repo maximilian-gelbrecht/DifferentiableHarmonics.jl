@@ -206,8 +206,8 @@ function compute_P(p::HarmonicsParameters{T}; sh_norm=GSL.GSL_SF_LEGENDRE_SPHARM
             for il ∈ 1:(L - abs(m)) # l = abs(m):l_max
                 l = il + abs(m) - 1
                 if m<0 # the ass. LP are actually the same for m<0 for our application as only |m| is needed, but I do this here in this way to have everything related to SH in the same matrix format
-                    P[ilat, il, neg_m_offset+abs(m)+1] = pre_factor(m) * temp[1][gsl_legendre_index(l,abs(m))]
-                    dPμdμ[ilat, il, neg_m_offset+abs(m)+1] = pre_factor(m) * temp[2][gsl_legendre_index(l,abs(m))]
+                    P[ilat, il, neg_m_offset+abs(m)] = pre_factor(m) * temp[1][gsl_legendre_index(l,abs(m))]
+                    dPμdμ[ilat, il, neg_m_offset+abs(m)] = pre_factor(m) * temp[2][gsl_legendre_index(l,abs(m))]
                 else
                     P[ilat, il, m+1] = pre_factor(m) * temp[1][gsl_legendre_index(l,m)]
                     dPμdμ[ilat, il, m+1] = pre_factor(m) * temp[2][gsl_legendre_index(l,m)]

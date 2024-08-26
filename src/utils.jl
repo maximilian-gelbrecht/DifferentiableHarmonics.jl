@@ -32,7 +32,7 @@ function mMatrix(p::HarmonicsParameters)
         m[1:L-m_i, i_m] .= m_i
     end 
 
-    for (i_m, m_i) in enumerate(0:-1:(-L_max)) # negative m
+    for (i_m, m_i) in enumerate(-1:-1:(-L_max)) # negative m
         m[1:L-abs(m_i), i_m + neg_m_offset] .= m_i
     end 
 
