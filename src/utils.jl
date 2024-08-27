@@ -108,8 +108,15 @@ end
 """
 ($TYPEDSIGNATURES)
 
-Generate a zero array with the correct shape to represend the grid domain and on the correct device and eltype. Additional input arguments are appended after the first two leading dimensions
+Generate a zero array with the correct shape to represend the grid domain and on the correct device and eltype, the same spectral truncation as defined in `p` is applied. Additional input arguments are appended after the first two leading dimensions
 """
-function rand_grid(p::HarmonicsParameters{T}, size...) where T
-    return isgpu(p.device) ? CUDA.rand(T, p.size_grid..., size...) : rand(T, p.size_grid..., size...)
+rand_grid(p::HarmonicsParameters{T}, size...) where T = rand_grid(p, SHtoGaussianGridTransform(p, size...), size...)
+
+"""
+($TYPEDSIGNATURES)
+Generate a zero array with the correct shape to represend the grid domain and on the correct device and eltype, the same spectral truncation as defined in `p` is applied. Additional input arguments are appended after the first two leading dimensions
+"""
+function rand_grid(p::HarmonicsParameters{T}, analysis_plan::SHtoGaussianGridTransform, size...) where T
+    randSH_array = rand_SH(p, size...)
+    return transform_grid(randSH_array, analysis_plan)
 end 

@@ -6,9 +6,9 @@ using DocStringExtensions, FastGaussQuadrature, GSL, Tullio, KernelAbstractions,
 
 include("gpu.jl")
 include("parameters.jl")
-include("utils.jl")
 include("r2r_transform.jl")
 include("transform.jl")
+include("utils.jl")
 
 export HarmonicsParameters
 export SHtoGaussianGridTransform, GaussianGridtoSHTransform

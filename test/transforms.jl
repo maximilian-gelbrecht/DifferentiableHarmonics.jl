@@ -7,7 +7,7 @@ using StatsBase
 @testset "Transforms" begin
     
     # load forcing and model parameters
-    L_max = 22
+    L_max = 21
     p = HarmonicsParameters(L_max)
 
     synthesis_plan = GaussianGridtoSHTransform(p, 3, 2)
