@@ -12,54 +12,48 @@ import DifferentiableHarmonics: SHtoGrid_dλ, SHtoGrid_dμ, SHtoGrid_dθ, Δ
     analysis_plan = SHtoGaussianGridTransform(p, 3, N_batch)
     synthesis_plan = GaussianGridtoSHTransform(p, 3, N_batch)
 
-
     # 2D deriv
     cosθ = zeros_grid(p) 
     msinθ = zeros_grid(p)
     for i ∈ 1:p.N_lats
-        cosθ[i,:] .= cos(qg3ppars.θ[i])
-        msinθ[i,:] .= -sin(qg3ppars.θ[i])
+        cosθ[i,:] .= cos(p.θ[i])
+        msinθ[i,:] .= -sin(p.θ[i])
     end
+    cSH_2d = transform_SH(cosθ, synthesis_plan)
 
     # very close to zero
     @test abs.(mean(SHtoGrid_dλ(cSH_2d, dλ, analysis_plan))) < 1e-5
     
     # near constant 1
-    @test mean(abs.(QG3.SHtoGrid_dμ(cSH_2d, dμ) .- 1)) < 1e-2
+    @test mean(abs.(SHtoGrid_dμ(cSH_2d, dμ) .- 1)) < 1e-2
     
     # near -sinθ
-    @test mean(abs.(QG3.SHtoGrid_dθ(cSH_2d, dμ) - msinθ)) < 1e-2
+    @test mean(abs.(SHtoGrid_dθ(cSH_2d, dμ) - msinθ)) < 1e-2
 
     cosθ = repeat(cosθ, 1, 1, 3)
     msinθ = repeat(msinθ, 1, 1, 3)
-
+    cSH = transform_SH(cosθ, synthesis_plan)
 
     # 3D deriv
     # very close to zero
-    @test abs.(mean(QG3.SHtoGrid_dλ(cSH, dλ, analysis_plan))) < 1e-5
+    @test abs.(mean(SHtoGrid_dλ(cSH, dλ, analysis_plan))) < 1e-5
     
     # near constant 1
-    @test mean(abs.(QG3.SHtoGrid_dμ(cSH, dμ) .- 1)) < 1e-2
+    @test mean(abs.(SHtoGrid_dμ(cSH, dμ) .- 1)) < 1e-2
     
     # near -sinθ
-    @test mean(abs.(QG3.SHtoGrid_dθ(cSH, dμ) - msinθ)) < 1e-2
+    @test mean(abs.(SHtoGrid_dθ(cSH, dμ) - msinθ)) < 1e-2
 
     #there's a bias close to the poles)
+    A = rand_SH(p, 2, 2)
     msinθ = msinθ[:,:,:,1]
-    L1 = SHtoGrid_dθ(transform_SH((-msinθ).*SHtoGrid_dθ(ψ_0, g4d),g4d),g4d) ./ (-msinθ) + SHtoGrid_dφ(SHtoSH_dφ(ψ_0, g4d), g4d) ./ (msinθ .* msinθ)
-    L2 = transform_grid(QG3.Δ(ψ_0, g4d), g4d)
-    @test mean(abs.(L1-L2)[:,4:end-4,:]) < 0.05
-
 
     # test Laplacian (there's a bias close to the poles)
-
-    A = rand_SH(p, 2, 2)
-
     L1 = SHtoGrid_dθ(transform_SH((-msinθ).*SHtoGrid_dθ(A, dμ),synthesis_plan),dμ) ./ (-msinθ) + SHtoGrid_dφ(SHtoSH_dφ(ψ_0, dλ), dλ, analysis_plan) ./ (msinθ .* msinθ)
     L2 = transform_grid(Δ(A, L), analysis_plan)
-    @test mean(abs.(L1-L2)) < 0.05
+    @test mean(abs.(L1-L2)[4:end-4,:,:]) < 0.05
 
-
+    B = rand_SH(p, 2, 2)
     # gradient correctness 
     y, back = Zygote.pullback(x -> SHtoGrid_dθ(x,  dμ), B)
     fd_jvp = j′vp(central_fdm(5,1), x -> SHtoGrid_dθ(x,  dμ), y, B)

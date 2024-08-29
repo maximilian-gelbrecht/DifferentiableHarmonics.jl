@@ -1,14 +1,14 @@
 module DifferentiableHarmonics
 
-# Write your package code here.
-
 using DocStringExtensions, FastGaussQuadrature, GSL, Tullio, KernelAbstractions, CUDA
 
+include("abstracttypes.jl")
 include("gpu.jl")
 include("parameters.jl")
+include("utils.jl")
 include("r2r_transform.jl")
 include("transform.jl")
-include("utils.jl")
+include("derivatives.jl")
 
 export HarmonicsParameters
 export SHtoGaussianGridTransform, GaussianGridtoSHTransform

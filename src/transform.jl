@@ -5,21 +5,6 @@ import GSL.sf_legendre_deriv_alt_array_e
 import GSL.sf_legendre_array_index
 
 """
-    abstract type AbstractSHTransform{onGPU} 
-
-Required fields for all subtypes: 
-
-* outputsize
-
-"""
-abstract type AbstractSHTransform{onGPU} end
-
-abstract type AbstractSHtoGridTransform{onGPU} <: AbstractSHTransform{onGPU} end 
-
-abstract type AbstractGridtoSHTransform{onGPU} <: AbstractSHTransform{onGPU} end 
-
-
-"""
     transform_SH(data::AbstractArray{T,N}, t::GaussianGridtoSHTransform) 
 
 Transforms `data` into the spherical harmonics domain. The coefficents are ordered in a matrix in coloumns of the m value. On CPU the convention of FastTransform.jl is used (0, -1, 1, -2, 2, ...), on GPU the convention (0, 1, 2, 3, ...., (nothing, -1, -2, -3, ...)). Watch out, in future proabaly this might be standardized. 
@@ -65,10 +50,10 @@ function GaussianGridtoSHTransform(p::HarmonicsParameters{T}, N_channels::Int=3,
     (; device) = p
     __, P = compute_P(p)
     Pw = compute_LegendreGauss(p, P)
-    A_real = rand_grid(p, N_channels) 
+    A_real = zeros_grid(p, N_channels) 
 
     if N_batch > 0 
-        A_real4d = rand_grid(p, N_channels, N_batch) 
+        A_real4d = zeros_grid(p, N_channels, N_batch) 
     else 
         FT_4d = nothing 
     end  
@@ -134,10 +119,10 @@ function SHtoGaussianGridTransform(p::HarmonicsParameters{T}, N_channels::Int=3,
     (;N_lats, N_lons, device) = p
     __, P = compute_P(p)
 
-    A_real = rand_grid(p, N_channels) 
+    A_real = zeros_grid(p, N_channels) 
 
     if N_batch > 0 
-        A_real4d = rand_grid(p, N_channels, N_batch) 
+        A_real4d = zeros_grid(p, N_channels, N_batch) 
     else 
         iFT_4d = nothing 
     end  

@@ -1,6 +1,7 @@
 using SpeedyWeather.RingGrids
 using SpeedyWeather.LowerTriangularMatrices
 using SpeedyWeather.SpeedyTransforms
+using SpeedyWeather
 using StatsBase
 
 # this is a very basic to test if the transform and derivite work sort of correct, it just checks if it can correctly transform and take derivatives of cosθ
@@ -44,9 +45,9 @@ using StatsBase
     
     @test mean(abs.(cSH[:,:,1] - cSH_2d)) < 1e-5
     @test sum(abs.(cSH) .> 1.) == 3
-    @test abs.(cSH[1,2,1]) > 20.
-    @test abs.(cSH[1,2,2]) > 20.
-    @test abs.(cSH[1,2,3]) > 20.
+    @test abs.(cSH[2,1,1]) > 20.
+    @test abs.(cSH[2,1,2]) > 20.
+    @test abs.(cSH[2,1,3]) > 20.
     
     cg = transform_grid(cSH, analysis_plan)
     @test mean(abs.(cg - cosθ) ./ abs.(cg)) < 1e-3
@@ -101,10 +102,10 @@ using StatsBase
 
     # compare with SpeedyTransforms 
 
-    spectral_grid = SpectralGrid(Float32, trunc=L_max, Grid=FullGaussianGrid, dealiasing=2)
-    S = SpectralTransform(spectral_grid)
+    #spectral_grid = SpeedyWeather.SpectralGrid(Float32, trunc=L_max, Grid=FullGaussianGrid, dealiasing=2)
+    #S = SpectralTransform(spectral_grid)
 
-    grid = FullGaussianGrid(A)
+    #grid = FullGaussianGrid(A)
 
     # convert SPH funciton
 

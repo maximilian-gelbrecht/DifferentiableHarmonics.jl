@@ -1,4 +1,5 @@
 import Base.show 
+using Zygote
 
 # this file contains all the code to take derivatives
 
@@ -41,7 +42,7 @@ function Derivative_dλ(p::HarmonicsParameters{T}; N_batch::Int=0) where {T}
     mm = -(mMatrix(p))
     mm_3d = repeat(mm, 1,1,1)
 
-    swap_m_sign_array = cu([1; Int((p.N_lons)/2)+3 : p.N_lons + 2; 1:Int((p.N_lons)/2)+1;])
+    swap_m_sign_array = DeviceArray(p.device, [1; Int((p.N_lons)/2)+3 : p.N_lons + 2; 1:Int((p.N_lons)/2)+1;])
      
     if N_batch > 0 
         mm_4d = repeat(mm_3d, 1,1,1,1)
@@ -49,7 +50,7 @@ function Derivative_dλ(p::HarmonicsParameters{T}; N_batch::Int=0) where {T}
         mm_4d = nothing
     end
 
-    Derivative_dλ{typeof(mm), typeof(mm_3d), typeof(mm_4d), typeof(swap_m_sign_array), cuda_used[]}(mm, mm_3d, mm_4d, swap_m_sign_array)
+    Derivative_dλ{typeof(mm), typeof(mm_3d), typeof(mm_4d), typeof(swap_m_sign_array), isgpu(p.device)}(mm, mm_3d, mm_4d, swap_m_sign_array)
 end
 
 """
@@ -79,7 +80,7 @@ SHtoSH_dφ(ψ::AbstractArray{T,3}, g::Derivative_dλ) where {T} = _SHtoSH_dφ(ψ
 # 4d field variant 
 SHtoSH_dφ(ψ::AbstractArray{T,4}, g::Derivative_dλ) where {T} = _SHtoSH_dφ(ψ, g.mm_4d, g.swap_m_sign_array)
 
-_SHtoSH_dφ(ψ::AbstractArray{T,N}, mm::AbstractArray{T,N}, swap_arr) where {T,N} = mm .* change_msign(ψ, swap_arr)
+_SHtoSH_dφ(ψ::AbstractArray{T,N}, mm::AbstractArray{S,N}, swap_arr) where {T,S,N} = mm .* change_msign(ψ, swap_arr)
 
 
 """
@@ -118,10 +119,10 @@ Pre-computes Pseudo-spectral approach to computing derivatives with repsect to �
 """
 function GaussianGrid_dμ(p::HarmonicsParameters{T}, N_channels::Int=3, N_batch::Int=0) where T
     dPμdμ, __ = compute_P(p)
-    A_real = rand_grid(p, N_channels)
+    A_real = zeros_grid(p, N_channels)
 
     if N_batch > 0 
-        A_real4d = rand_grid(p, N_channel, N_batch) 
+        A_real4d = zeros_grid(p, N_channels, N_batch) 
     else 
         iFT_4d = nothing 
     end  
